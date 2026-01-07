@@ -1,0 +1,2 @@
+Frontend Application for InnerSource Hub PoC
+Contains the React SPA code.

@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  # Backend Service (FastAPI)
+  backend:
+    build: ./backend
+    container_name: innersource_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://user:password@db/innersourcehub
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/app
+
+  # Frontend Service (React + Nginx)
+  frontend:
+    build: ./frontend
+    container_name: innersource_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+  # Database Service (PostgreSQL)
+  db:
+    image: postgres:15
+    container_name: innersource_db
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=innersourcehub
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Mock RAGFlow (In a real scenario, this would be a separate service or container)
+  # For this PoC, it's integrated into the backend, but we could add a placeholder service if needed.
+
+volumes:
+  postgres_data:
