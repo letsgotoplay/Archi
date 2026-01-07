@@ -1,0 +1,2 @@
+Backend Service for InnerSource Hub PoC
+Contains the FastAPI application, database models, and mock RAGFlow integration.
