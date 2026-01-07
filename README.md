@@ -47,12 +47,78 @@ graph TD
 
 ### Prerequisites
 - Docker and Docker Compose
+- Python 3.12+ (or use `uv` to manage Python versions)
+- Node.js and pnpm (or npm)
 
-### Steps
-1. Clone the repository.
-2. Run `docker-compose up --build`.
-3. Access the Frontend at `http://localhost:3000`.
-4. Access the Backend API Docs at `http://localhost:8000/docs`.
+### Option 1: Local Development (Recommended)
+
+For active development with hot-reload on frontend and backend:
+
+```bash
+# Start all services (database in Docker, frontend/backend locally)
+./start-local.sh
+
+# Stop all services
+./stop-local.sh
+```
+
+This will:
+- Start PostgreSQL in a Docker container
+- Start the FastAPI backend with hot-reload on port 8000
+- Start the React development server on port 3000
+
+**Access the application:**
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8000
+- API Documentation (Swagger UI): http://localhost:8000/docs
+
+**View logs:**
+```bash
+tail -f /tmp/innersource_backend.log  # Backend logs
+tail -f /tmp/innersource_frontend.log # Frontend logs
+```
+
+### Option 2: Docker Compose
+
+For a complete containerized setup:
+
+```bash
+# Start everything in Docker
+docker-compose up --build
+
+# Stop everything
+docker-compose down
+```
+
+### Manual Startup (Individual Services)
+
+If you prefer to start services manually:
+
+**Database (Docker):**
+```bash
+docker run -d \
+  --name innersource_db \
+  -e POSTGRES_USER=user \
+  -e POSTGRES_PASSWORD=password \
+  -e POSTGRES_DB=innersourcehub \
+  -p 5432:5432 \
+  postgres:15
+```
+
+**Backend:**
+```bash
+cd backend
+uv pip install fastapi uvicorn sqlalchemy psycopg2-binary
+DATABASE_URL="postgresql://user:password@localhost/innersourcehub" \
+  uvicorn app.main:app --reload --port 8000
+```
+
+**Frontend:**
+```bash
+cd frontend
+pnpm install  # or npm install
+pnpm start    # or npm start
+```
 
 ### Sample Data Creation
 Once the system is running, you can use the Swagger UI (`http://localhost:8000/docs`) or the Frontend "Submit Idea" form to create data.
